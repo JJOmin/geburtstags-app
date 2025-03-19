@@ -22,6 +22,7 @@ class BirthdayScreen extends StatefulWidget {
 
 class BirthdayScreenState extends State<BirthdayScreen> {
   List<Birthday> birthdays = [];
+  double _fabBottomPadding = 0.0; // Default padding
 
   @override
   void initState() {
@@ -35,9 +36,49 @@ class BirthdayScreenState extends State<BirthdayScreen> {
     });
   }
 
+  void showSnackbar(BuildContext context, Birthday birthday) {
+    setState(() {
+      _fabBottomPadding = 48.0; // Move FAB up when Snackbar appears
+    });
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+          SnackBar(
+            content: Text('${birthday.name} gelöscht.'),
+            duration: const Duration(seconds: 3),
+            animation: CurvedAnimation(
+              parent: AnimationController(
+                duration:
+                    const Duration(milliseconds: 250), // Custom animation speed
+                vsync: Scaffold.of(context),
+              ),
+              curve: Curves.easeInOut, // Custom animation curve
+            ),
+            action: SnackBarAction(
+              label: 'Rückgängig',
+              textColor: const Color.fromARGB(255, 126, 126, 240),
+              onPressed: () {
+                setState(() {
+                  BirthdayRepo.instance.insert(birthday);
+                  loadBirthdays(); // Liste neu laden
+                });
+              },
+            ),
+          ),
+        )
+        .closed
+        .then((_) {
+      setState(() {
+        _fabBottomPadding = 0.0; // Reset FAB position after Snackbar closes
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+      //floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       backgroundColor: const Color.fromARGB(255, 250, 250, 250),
       body: ListView.builder(
         itemCount: birthdays.length,
@@ -50,22 +91,7 @@ class BirthdayScreenState extends State<BirthdayScreen> {
               setState(() {
                 BirthdayRepo.instance.delete(birthday);
               });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${birthday.name} gelöscht.'),
-                  duration: const Duration(seconds: 3),
-                  action: SnackBarAction(
-                    label: 'Rückgängig',
-                    textColor: const Color.fromARGB(255, 126, 126, 240),
-                    onPressed: () {
-                      setState(() {
-                        BirthdayRepo.instance.insert(birthday);
-                        loadBirthdays(); // Liste neu laden
-                      });
-                    },
-                  ),
-                ),
-              );
+              showSnackbar(context, birthday);
             },
             child: ListTile(
               onTap: () {
@@ -74,7 +100,7 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                   BirthdayDetailScreen.routeName,
                   arguments: birthday,
                 ).then((_) {
-                  loadBirthdays(); //Aktualisiert die Liste nach Rückkehr
+                  loadBirthdays(); // Aktualisiert die Liste nach Rückkehr
                 });
               },
               title: Container(
@@ -150,27 +176,27 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                     const SizedBox(width: 20),
                     const Spacer(),
                     Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: (birthday.nextBirthday ?? 999) < 5
-                              ? const Color.fromARGB(
-                                  255, 255, 165, 0) // Weniger als 10 Tage
-                              : const Color.fromARGB(
-                                  255, 129, 152, 221), // Sonst Orange
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: (birthday.nextBirthday ?? 999) < 5
+                            ? const Color.fromARGB(
+                                255, 255, 165, 0) // Weniger als 10 Tage
+                            : const Color.fromARGB(
+                                255, 129, 152, 221), // Sonst Orange
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 5, right: 5, top: 3, bottom: 4),
+                        child: Text(
+                          "${birthday.nextBirthday.toString()} \n Tage",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(height: 1), // Reduziert Zeilenabstand
+                          textAlign: TextAlign.center,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 5, right: 5, top: 3, bottom: 4),
-                          child: Text(
-                            "${birthday.nextBirthday.toString()} \n Tage",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                    height: 1), // Reduziert Zeilenabstand
-                            textAlign: TextAlign.center,
-                          ),
-                        )),
+                      ),
+                    ),
                     IconButton(
                       onPressed: () {
                         shareBirthdayAsCalendarEvent(birthday);
@@ -184,21 +210,26 @@ class BirthdayScreenState extends State<BirthdayScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(
-            MaterialPageRoute(
-              fullscreenDialog: true,
-              builder: (BuildContext context) => const BirthdayForm(),
-            ),
-          )
-              .then((value) {
-            // Refresh list when returning from BirthdayForm
-            loadBirthdays();
-          });
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: AnimatedPadding(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.only(bottom: _fabBottomPadding),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context)
+                .push(
+              MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (BuildContext context) => const BirthdayForm(),
+              ),
+            )
+                .then((value) {
+              // Refresh list when returning from BirthdayForm
+              loadBirthdays();
+            });
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
