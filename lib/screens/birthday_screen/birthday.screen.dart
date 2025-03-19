@@ -50,6 +50,22 @@ class BirthdayScreenState extends State<BirthdayScreen> {
               setState(() {
                 BirthdayRepo.instance.delete(birthday);
               });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${birthday.name} gelöscht.'),
+                  duration: const Duration(seconds: 3),
+                  action: SnackBarAction(
+                    label: 'Rückgängig',
+                    textColor: const Color.fromARGB(255, 126, 126, 240),
+                    onPressed: () {
+                      setState(() {
+                        BirthdayRepo.instance.insert(birthday);
+                        loadBirthdays(); // Liste neu laden
+                      });
+                    },
+                  ),
+                ),
+              );
             },
             child: ListTile(
               onTap: () {
@@ -153,7 +169,6 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                                 ?.copyWith(
                                     height: 1), // Reduziert Zeilenabstand
                             textAlign: TextAlign.center,
-                            //extAlign: TextAlign.right
                           ),
                         )),
                     IconButton(
