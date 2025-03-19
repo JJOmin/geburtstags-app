@@ -39,14 +39,19 @@ class BirthdayScreenState extends State<BirthdayScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 250, 250),
-      body: Dismissible(
-        key: UniqueKey(),
-        direction: DismissDirection.endToStart,
-        child: ListView.builder(
-          itemCount: birthdays.length,
-          itemBuilder: (context, index) {
-            final birthday = birthdays[index];
-            return ListTile(
+      body: ListView.builder(
+        itemCount: birthdays.length,
+        itemBuilder: (context, index) {
+          final birthday = birthdays[index];
+          return Dismissible(
+            key: UniqueKey(),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              setState(() {
+                BirthdayRepo.instance.delete(birthday);
+              });
+            },
+            child: ListTile(
               onTap: () {
                 Navigator.pushNamed(
                   context,
@@ -160,9 +165,9 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                   ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
