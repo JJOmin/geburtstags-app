@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geburtstags_app/models/birthday.model.dart';
 import 'package:geburtstags_app/screens/birthday_screen/detail/birthday_form.screen.dart';
+import 'package:geburtstags_app/util/date_time.util.dart';
 import 'package:intl/intl.dart';
-import 'package:geburtstags_app/repository/birthdayrepo.dart';
+import 'package:geburtstags_app/repository/birthday.repo.dart';
 import 'package:avatar_plus/avatar_plus.dart';
 
 class BirthdayDetailScreen extends StatefulWidget {
@@ -12,7 +13,6 @@ class BirthdayDetailScreen extends StatefulWidget {
   });
 
   final Birthday birthday;
-
   static const String routeName = "/birthday-detail";
 
   @override
@@ -21,6 +21,7 @@ class BirthdayDetailScreen extends StatefulWidget {
 
 class _BirthdayDetailScreenState extends State<BirthdayDetailScreen> {
   late Birthday birthday;
+  final dateTimeUtil = DateTimeUtil();
 
   @override
   void initState() {
@@ -55,7 +56,8 @@ class _BirthdayDetailScreenState extends State<BirthdayDetailScreen> {
               onPressed: () {
                 BirthdayRepo.instance.delete(birthday);
                 Navigator.pop(context); // Closes dialog
-                Navigator.pop(context); // Closes previous screen if applicable
+                Navigator.pop(
+                    context, true); // Closes previous screen if applicable
               },
             ),
           ],
@@ -236,14 +238,18 @@ class _BirthdayDetailScreenState extends State<BirthdayDetailScreen> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text(birthday.age.toString()),
+                                      Text(dateTimeUtil
+                                          .getCurrentAge(birthday.date)
+                                          .toString()),
                                       const SizedBox(height: 15),
                                       const Text(
                                         'Sternzeichen:',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text(birthday.zodiacSign.toString()),
+                                      Text(dateTimeUtil
+                                          .getZodiacSign(birthday.date)
+                                          .toString()),
                                       const SizedBox(height: 15),
                                       const Text(
                                         'Geburtstag in:',
@@ -251,7 +257,7 @@ class _BirthdayDetailScreenState extends State<BirthdayDetailScreen> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Text(
-                                          "${birthday.nextBirthday.toString()} Tagen"),
+                                          "${dateTimeUtil.getDaysLeft(birthday.date).toString()} Tagen"),
                                     ],
                                   ),
                                 ],

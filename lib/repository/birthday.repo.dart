@@ -1,4 +1,5 @@
 import 'package:geburtstags_app/models/birthday.model.dart';
+import 'package:geburtstags_app/util/date_time.util.dart';
 
 class BirthdayRepo {
   // Private Constructor
@@ -30,6 +31,8 @@ class BirthdayRepo {
   static final BirthdayRepo _instance = BirthdayRepo._privateConstructor();
   static BirthdayRepo get instance => _instance;
 
+  //final dateTimeUtil = DateTimeUtil();
+
   final List<Birthday> _birthdays = [];
   List<Birthday> getBirthdays() => _birthdays;
 
@@ -45,5 +48,21 @@ class BirthdayRepo {
 
   void delete(Birthday birthday) {
     _birthdays.remove(birthday);
+  }
+
+  List<Birthday> getNextFiveBirthdays() {
+    final dateTimeUtil = DateTimeUtil();
+    List<Birthday> nextFiveBirthdays =
+        List.from(_birthdays); //neuerstellen der liste
+
+    nextFiveBirthdays.sort((a, b) => dateTimeUtil
+        .getDaysLeft(a.date)
+        .compareTo(dateTimeUtil.getDaysLeft(b.date)));
+
+    //sicherheitsabfrage damit wirklich nur 5 elemente rturnt werden
+    if (nextFiveBirthdays.length > 5) {
+      return nextFiveBirthdays.sublist(0, 5);
+    }
+    return nextFiveBirthdays;
   }
 }

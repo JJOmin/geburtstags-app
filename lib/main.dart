@@ -3,12 +3,12 @@ import 'package:geburtstags_app/models/birthday.model.dart';
 import 'package:geburtstags_app/screens/birthday_screen/birthday.screen.dart';
 import 'package:geburtstags_app/screens/birthday_screen/detail/birthday_detail.screen.dart';
 import 'package:geburtstags_app/screens/settings.screen.dart';
+import 'package:geburtstags_app/screens/widget/simple_app_bar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:geburtstags_app/screens/home.screen.dart';
-import 'package:geburtstags_app/screens/bottomnavbarstate.screen.dart';
-//import 'package:geburtstags_app/screens/custom_app_bar.screens.dart';
+import 'package:geburtstags_app/screens/widget/bottom_nav_bar.dart';
+
 import 'package:geburtstags_app/screens/birthday_screen/detail/birthday_form.screen.dart';
-//import 'repository/birthdayrepo.dart';
 
 void main() {
   runApp(const MyApp());
@@ -75,7 +75,7 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56.0),
-        child: CustomAppBar(
+        child: SimpleAppBar(
           headline: "Birthdays",
         ),
       ),
@@ -94,41 +94,5 @@ class HomePageState extends State<HomePage> {
         selectionColor: selectionColor,
       ),
     );
-  }
-}
-
-class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({
-    super.key,
-    required this.headline,
-  });
-
-  final String headline;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 93, 158, 242),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(20, 0, 0, 0),
-              blurRadius: 3.0,
-              spreadRadius: 0.5,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: AppBar(
-          iconTheme: const IconThemeData(
-            color: Colors.white, // Change back button color
-          ),
-          backgroundColor: const Color.fromARGB(255, 93, 158, 242),
-          title: Text(
-            headline,
-            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-          ),
-          centerTitle: true,
-        ));
   }
 }

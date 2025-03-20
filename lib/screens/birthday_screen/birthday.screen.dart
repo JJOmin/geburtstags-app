@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:geburtstags_app/repository/birthdayrepo.dart';
+import 'package:geburtstags_app/repository/birthday.repo.dart';
 import 'package:geburtstags_app/models/birthday.model.dart';
-//import 'package:intl/date_symbol_data_local.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:geburtstags_app/screens/birthday_screen/detail/birthday_detail.screen.dart';
 import 'package:geburtstags_app/screens/birthday_screen/detail/birthday_form.screen.dart';
 import 'package:avatar_plus/avatar_plus.dart';
+import 'package:geburtstags_app/util/date_time.util.dart';
 
-//import 'package:flutter_tilt/flutter_tilt.dart';
 class BirthdayScreen extends StatefulWidget {
   const BirthdayScreen({super.key});
 
@@ -23,6 +22,7 @@ class BirthdayScreen extends StatefulWidget {
 class BirthdayScreenState extends State<BirthdayScreen> {
   List<Birthday> birthdays = [];
   double _fabBottomPadding = 0.0; // Default padding
+  final dateTimeUtil = DateTimeUtil();
 
   @override
   void initState() {
@@ -40,7 +40,6 @@ class BirthdayScreenState extends State<BirthdayScreen> {
     setState(() {
       _fabBottomPadding = 48.0; // Move FAB up when Snackbar appears
     });
-
     ScaffoldMessenger.of(context)
         .showSnackBar(
           SnackBar(
@@ -77,8 +76,6 @@ class BirthdayScreenState extends State<BirthdayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      //floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       backgroundColor: const Color.fromARGB(255, 250, 250, 250),
       body: ListView.builder(
         itemCount: birthdays.length,
@@ -91,6 +88,7 @@ class BirthdayScreenState extends State<BirthdayScreen> {
               setState(() {
                 BirthdayRepo.instance.delete(birthday);
               });
+              if (!mounted) return;
               showSnackbar(context, birthday);
             },
             child: ListTile(
@@ -99,8 +97,13 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                   context,
                   BirthdayDetailScreen.routeName,
                   arguments: birthday,
-                ).then((_) {
+                ).then((result) {
                   loadBirthdays(); // Aktualisiert die Liste nach Rückkehr
+                  if (result == true && mounted) {
+                    showSnackbar(context, birthday);
+                  } else {
+                    return;
+                  }
                 });
               },
               title: Container(
@@ -165,7 +168,7 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              "wird ${DateFormat('EE, d. MMMM', 'de_DE').format(birthday.nextBirthdayDate)} ${birthday.age + 1} Jahre alt",
+                              "wird ${DateFormat('EE, d. MMMM', 'de_DE').format(dateTimeUtil.getNextBirthdayDate(birthday.date))} ${dateTimeUtil.getNextAge(birthday.date) + 1} Jahre alt",
                               style: Theme.of(context).textTheme.bodySmall,
                               textAlign: TextAlign.left,
                             ),
@@ -178,7 +181,7 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: (birthday.nextBirthday ?? 999) < 5
+                        color: (dateTimeUtil.getDaysLeft(birthday.date)) < 5
                             ? const Color.fromARGB(
                                 255, 255, 165, 0) // Weniger als 10 Tage
                             : const Color.fromARGB(
@@ -188,7 +191,7 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                         padding: const EdgeInsets.only(
                             left: 5, right: 5, top: 3, bottom: 4),
                         child: Text(
-                          "${birthday.nextBirthday.toString()} \n Tage",
+                          "${dateTimeUtil.getDaysLeft(birthday.date).toString()} \n Tage",
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium

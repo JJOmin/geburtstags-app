@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:geburtstags_app/repository/birthdayrepo.dart';
+import 'package:geburtstags_app/repository/birthday.repo.dart';
 import 'package:geburtstags_app/models/birthday.model.dart';
+import 'package:geburtstags_app/util/date_time.util.dart';
 
 class BirthdayForm extends StatefulWidget {
   const BirthdayForm({super.key, this.birthday, this.isEdit = false});
@@ -24,6 +25,7 @@ class _BirthdayFormState extends State<BirthdayForm> {
   final phoneNumberController = TextEditingController();
   final zodiacSignController = TextEditingController();
   DateTime? _selectedDate;
+  final dateTimeUtil = DateTimeUtil();
 
   @override
   void initState() {
@@ -34,7 +36,8 @@ class _BirthdayFormState extends State<BirthdayForm> {
       sirnameController.text = widget.birthday!.sirname.toString();
       mailController.text = widget.birthday!.emailAddress.toString();
       phoneNumberController.text = widget.birthday!.phoneNumber.toString();
-      zodiacSignController.text = widget.birthday!.zodiacSign.toString();
+      zodiacSignController.text =
+          dateTimeUtil.getZodiacSign(widget.birthday!.date);
       notesController.text = widget.birthday!.notes ?? "";
       _selectedDate = widget.birthday!.date;
       _dateController.text = _selectedDate != null
@@ -94,14 +97,7 @@ class _BirthdayFormState extends State<BirthdayForm> {
                         _selectedDate != null) {
                       if (widget.isEdit) {
                         Birthday updatedBirthday = Birthday(
-                            id: widget.birthday!
-                                .id, //does not get updated through input
-                            nextBirthdayDate: widget.birthday!
-                                .nextBirthdayDate, //does not get updated through input
-                            zodiacSign: widget.birthday!
-                                .zodiacSign, //does not get updated through input
-                            age: widget.birthday!
-                                .age, //does not get updated through input
+                            id: widget.birthday!.id,
                             date: _selectedDate!,
                             name: nameController.text,
                             sirname: sirnameController.text,
