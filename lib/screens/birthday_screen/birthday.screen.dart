@@ -168,7 +168,7 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              "wird ${DateFormat('EE, d. MMMM', 'de_DE').format(dateTimeUtil.getNextBirthdayDate(birthday.date))} ${dateTimeUtil.getNextAge(birthday.date) + 1} Jahre alt",
+                              "wird ${DateFormat('EE, d. MMMM', 'de_DE').format(dateTimeUtil.getNextBirthdayDate(birthday.date))} ${dateTimeUtil.getNextAge(birthday.date)} Jahre alt",
                               style: Theme.of(context).textTheme.bodySmall,
                               textAlign: TextAlign.left,
                             ),

@@ -15,10 +15,10 @@ class SimpleAppBar extends StatelessWidget {
           color: const Color.fromARGB(255, 93, 158, 242),
           boxShadow: [
             BoxShadow(
-              color: const Color.fromARGB(20, 0, 0, 0),
+              color: const Color.fromARGB(30, 0, 0, 0),
               blurRadius: 3.0,
               spreadRadius: 0.5,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 5),
             ),
           ],
         ),

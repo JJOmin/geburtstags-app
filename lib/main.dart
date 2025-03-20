@@ -56,6 +56,11 @@ class HomePageState extends State<HomePage> {
   int selectedIndex = 0;
   final Color backgroundColor = const Color.fromARGB(255, 255, 255, 255);
   final Color selectionColor = const Color.fromARGB(255, 93, 157, 242);
+  List<String> headlines = [
+    "Dashboard",
+    "Birthdays",
+    "Settings"
+  ]; //müsste noch ausgelagert werden in model
 
   //Pages for IndexedStack
   final List<Widget> pages = [
@@ -76,7 +81,7 @@ class HomePageState extends State<HomePage> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56.0),
         child: SimpleAppBar(
-          headline: "Birthdays",
+          headline: headlines[selectedIndex],
         ),
       ),
 
