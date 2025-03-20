@@ -1,5 +1,5 @@
 import 'package:geburtstags_app/models/birthday.model.dart';
-import 'package:geburtstags_app/util/date_time.util.dart';
+import 'package:geburtstags_app/utils/date_time.util.dart';
 
 class BirthdayRepo {
   // Private Constructor

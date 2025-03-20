@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:geburtstags_app/repository/birthday.repo.dart';
 import 'package:geburtstags_app/models/birthday.model.dart';
-import 'package:geburtstags_app/util/date_time.util.dart';
+import 'package:geburtstags_app/utils/date_time.util.dart';
 
 class BirthdayForm extends StatefulWidget {
   const BirthdayForm({super.key, this.birthday, this.isEdit = false});

@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:geburtstags_app/screens/birthday_screen/detail/birthday_detail.screen.dart';
 import 'package:geburtstags_app/screens/birthday_screen/detail/birthday_form.screen.dart';
 import 'package:avatar_plus/avatar_plus.dart';
-import 'package:geburtstags_app/util/date_time.util.dart';
+import 'package:geburtstags_app/utils/date_time.util.dart';
 
 class BirthdayScreen extends StatefulWidget {
   const BirthdayScreen({super.key});
