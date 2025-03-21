@@ -80,7 +80,7 @@ class _BirthdayDetailScreenState extends State<BirthdayDetailScreen> {
                   color: const Color.fromARGB(255, 93, 158, 242),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(20, 0, 0, 0),
+                      color: const Color.fromARGB(30, 0, 0, 0),
                       blurRadius: 3.0,
                       spreadRadius: 0.5,
                       offset: const Offset(0, 4),
@@ -142,7 +142,15 @@ class _BirthdayDetailScreenState extends State<BirthdayDetailScreen> {
                       color: const Color.fromARGB(
                           91, 33, 149, 243), // Background color
                       borderRadius:
-                          BorderRadius.circular(20), // Rounded corners
+                          BorderRadius.circular(15), // Rounded corners
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(30, 0, 0, 0),
+                          blurRadius: 3.0,
+                          spreadRadius: 0.5,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
@@ -168,7 +176,7 @@ class _BirthdayDetailScreenState extends State<BirthdayDetailScreen> {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 30),
+                              SizedBox(width: 40),
                               (birthday.profileImage == null)
                                   ? AvatarPlus(
                                       birthday.id,

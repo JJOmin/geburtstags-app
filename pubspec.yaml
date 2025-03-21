@@ -10,6 +10,7 @@ environment:
 dependencies:
   avatar_plus: ^0.0.5
   clock: ^1.1.2
+  custom_refresh_indicator: ^4.0.1
   flutter:
     sdk: flutter
   flutter_tilt: ^3.2.1
