@@ -21,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Birthday> nextFiveBirthdays = [];
+  List<Birthday> todaysBirthdays = [];
   final dateTimeUtil = DateTimeUtil();
 
   @override
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void loadBirthdays() {
     setState(() {
       nextFiveBirthdays = BirthdayRepo.instance.getNextFiveBirthdays();
+      todaysBirthdays = BirthdayRepo.instance.getTodaysBirthdays();
     });
   }
 
@@ -101,87 +103,121 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10.0, right: 10),
-                  child: ListView.builder(
-                    itemCount: nextFiveBirthdays.length,
-                    itemBuilder: (context, index) {
-                      final birthday = nextFiveBirthdays[index];
-                      final daysUntilBirthday =
-                          dateTimeUtil.getDaysLeft(birthday.date);
-                      final nextAge = dateTimeUtil.getNextAge(birthday.date);
-
-                      final formattedDate = DateFormat('EE, d. MMMM', 'de_DE')
-                          .format(
-                              dateTimeUtil.getNextBirthdayDate(birthday.date));
-
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Card(
-                          elevation: 4,
-                          color: Color.fromARGB(255, 2555, 255, 255),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  BirthdayDetailScreen.routeName,
-                                  arguments: birthday,
-                                ).then((result) {
-                                  loadBirthdays(); // Aktualisiert die Liste nach Rückkehr
-                                  if (result == true && mounted) {
-                                    showSnackbar(context, birthday);
-                                  } else {
-                                    return;
-                                  }
-                                });
-                              },
-                              leading: (birthday.profileImage == null)
-                                  ? AvatarPlus(
-                                      birthday.id,
-                                      height:
-                                          MediaQuery.of(context).size.width -
-                                              360,
-                                      width: MediaQuery.of(context).size.width -
-                                          360,
-                                    )
-                                  : Image.network(
-                                      birthday.profileImage!,
-                                      height:
-                                          MediaQuery.of(context).size.width -
-                                              370,
-                                      width: MediaQuery.of(context).size.width -
-                                          370,
-                                      fit: BoxFit.cover,
-                                    ),
-                              title: Text(birthday.name),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    formattedDate,
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(115, 0, 0, 0)),
-                                  ),
-                                  Text(
-                                    "In $daysUntilBirthday Tagen",
-                                    style: const TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 105, 147, 36),
-                                        fontStyle: FontStyle.italic),
-                                  ),
-                                ],
-                              ),
-                              trailing: Text("wird $nextAge Jahre",
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                  )),
-                            ),
+                  child: ListView(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                          child: Text(
+                            todaysBirthdays.isEmpty
+                                ? "Heute keine Geburtstage 🎈"
+                                : todaysBirthdays.length == 1
+                                    ? "Heutiger Geburtstag 🎉🎂"
+                                    : "Heutige Geburtstage 🎉🎂",
                           ),
                         ),
-                      );
-                    },
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: nextFiveBirthdays.length,
+                        itemBuilder: (context, index) {
+                          final birthday = nextFiveBirthdays[index];
+                          final daysUntilBirthday =
+                              dateTimeUtil.getDaysLeft(birthday.date);
+                          final nextAge =
+                              dateTimeUtil.getNextAge(birthday.date);
+
+                          final formattedDate =
+                              DateFormat('EE, d. MMMM', 'de_DE').format(
+                                  dateTimeUtil
+                                      .getNextBirthdayDate(birthday.date));
+                          final timeUntilBirthday =
+                              dateTimeUtil.getTimeLeft(birthday.date);
+
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Card(
+                              elevation: 4,
+                              color: Color.fromARGB(255, 2555, 255, 255),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      BirthdayDetailScreen.routeName,
+                                      arguments: birthday,
+                                    ).then((result) {
+                                      loadBirthdays(); // Aktualisiert die Liste nach Rückkehr
+                                      if (result == true && mounted) {
+                                        showSnackbar(context, birthday);
+                                      } else {
+                                        return;
+                                      }
+                                    });
+                                  },
+                                  leading: (birthday.profileImage == null)
+                                      ? AvatarPlus(
+                                          birthday.id,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              360,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              360,
+                                        )
+                                      : Image.network(
+                                          birthday.profileImage!,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              370,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              370,
+                                          fit: BoxFit.cover,
+                                        ),
+                                  title: Text(birthday.name),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        formattedDate,
+                                        style: const TextStyle(
+                                            color:
+                                                Color.fromARGB(115, 0, 0, 0)),
+                                      ),
+                                      Text(
+                                        timeUntilBirthday["months"] > 1
+                                            ? "In ${timeUntilBirthday["months"]} Monaten"
+                                            : daysUntilBirthday == 1
+                                                ? "In einem Tag"
+                                                : "In $daysUntilBirthday Tagen",
+                                        style: const TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 105, 147, 36),
+                                            fontStyle: FontStyle.italic),
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: Text("wird $nextAge Jahre",
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                      )),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),

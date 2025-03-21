@@ -6,6 +6,44 @@ class DateTimeUtil {
         1; //letzte tag wird nicht mitgezählt
   }
 
+  Map getTimeLeft(DateTime birthday) {
+    final currentDate = DateTime.now();
+    final DateTime nextBirthday = getNextBirthdayDate(birthday);
+    final difference = _calculateMonthsAndDays(currentDate, nextBirthday);
+
+    return difference;
+  }
+
+//testing
+  Map<String, int> _calculateMonthsAndDays(DateTime from, DateTime to) {
+    if (to.isBefore(from)) {
+      final temp = from;
+      from = to;
+      to = temp;
+    }
+
+    int years = to.year - from.year;
+    int months = to.month - from.month;
+    int days = to.day - from.day;
+
+    if (days < 0) {
+      final prevMonth = DateTime(to.year, to.month, 0);
+      days += prevMonth.day;
+      months--;
+    }
+
+    if (months < 0) {
+      months += 12;
+      years--;
+    }
+
+    return {
+      "years": years,
+      "months": months,
+      "days": days,
+    };
+  }
+
   DateTime getNextBirthdayDate(DateTime birthday) {
     final currentDate = DateTime.now();
     DateTime nextBirthday =

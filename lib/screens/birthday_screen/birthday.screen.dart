@@ -75,168 +75,132 @@ class BirthdayScreenState extends State<BirthdayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    //final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 249, 249, 249),
       body: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
         child: ListView.builder(
           itemCount: birthdays.length,
           itemBuilder: (context, index) {
             final birthday = birthdays[index];
+            final daysUntilBirthday = dateTimeUtil.getDaysLeft(birthday.date);
+            final nextAge = dateTimeUtil.getNextAge(birthday.date);
+            final formattedDate = DateFormat('EE, d. MMM yyyy', 'de_DE')
+                .format(dateTimeUtil.getNextBirthdayDate(birthday.date));
+
             return Dismissible(
               key: UniqueKey(),
               direction: DismissDirection.endToStart,
               onDismissed: (direction) {
-                setState(() {
-                  BirthdayRepo.instance.delete(birthday);
-                });
+                setState(() => BirthdayRepo.instance.delete(birthday));
                 if (!mounted) return;
                 showSnackbar(context, birthday);
               },
-              child: ListTile(
-                onTap: () {
-                  Navigator.pushNamed(
-                    context,
-                    BirthdayDetailScreen.routeName,
-                    arguments: birthday,
-                  ).then((result) {
-                    loadBirthdays(); // Aktualisiert die Liste nach Rückkehr
-                    if (result == true && mounted) {
-                      showSnackbar(context, birthday);
-                    } else {
-                      return;
-                    }
-                  });
-                },
-                title: Container(
-                  width: 100,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(
-                        255, 255, 255, 255), // Sonst Orange
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(78, 0, 0, 0),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(2, 2),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: const Color.fromARGB(0, 0, 0, 0),
-                      width: 1,
+              child: Card(
+                elevation: 3,
+                color: Color.fromARGB(255, 255, 255, 255),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  leading: Container(
+                    width: 55,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.black26, width: 1),
+                    ),
+                    child: ClipOval(
+                      child: (birthday.profileImage == null)
+                          ? AvatarPlus(
+                              birthday.id,
+                              width: 45,
+                              height: 45,
+                            )
+                          : Image.network(
+                              birthday.profileImage!,
+                              width: 45,
+                              height: 45,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   ),
-                  child: Row(
+                  title: Text(
+                    birthday.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: Text(
+                    formattedDate,
+                    style: Theme.of(context).textTheme.bodySmall,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(0, 0, 0, 0),
-                          borderRadius: BorderRadius.circular(25),
-                          border: Border.all(
-                            color: const Color.fromARGB(255, 0, 0, 0),
-                            width: 1,
-                          ),
-                        ),
-                        child: (birthday.profileImage == null)
-                            ? AvatarPlus(
-                                birthday.id,
-                                height: MediaQuery.of(context).size.width - 350,
-                                width: MediaQuery.of(context).size.width - 350,
-                              )
-                            : Image.network(
-                                birthday.profileImage!,
-                                height: MediaQuery.of(context).size.width - 370,
-                                width: MediaQuery.of(context).size.width - 370,
-                                fit: BoxFit.cover,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: daysUntilBirthday < 5
+                                  ? Colors.orangeAccent
+                                  : Colors.blueAccent,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              "$nextAge Jahre",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
-                      ),
-                      const SizedBox(width: 15),
-                      IntrinsicWidth(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                birthday.name,
-                                style: Theme.of(context).textTheme.titleLarge,
-                                textAlign: TextAlign.left,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: daysUntilBirthday < 5
+                                  ? Colors.orangeAccent
+                                  : Colors.blueAccent,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              "$daysUntilBirthday Tage",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                DateFormat('EE, d. MMM yyyy', 'de_DE').format(
-                                    dateTimeUtil
-                                        .getNextBirthdayDate(birthday.date)),
-                                style: Theme.of(context).textTheme.bodySmall,
-                                textAlign: TextAlign.left,
-                              ),
-                            ],
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                      const Spacer(),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: (dateTimeUtil.getDaysLeft(birthday.date)) < 5
-                              ? const Color.fromARGB(
-                                  255, 255, 165, 0) // Weniger als 10 Tage
-                              : const Color.fromARGB(
-                                  255, 129, 152, 221), // Sonst Orange
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 5, right: 5, top: 3, bottom: 4),
-                          child: Text(
-                            "${dateTimeUtil.getNextAge(birthday.date).toString()} \n Jahre",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                    height: 1), // Reduziert Zeilenabstand
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: (dateTimeUtil.getDaysLeft(birthday.date)) < 5
-                              ? const Color.fromARGB(
-                                  255, 255, 165, 0) // Weniger als 10 Tage
-                              : const Color.fromARGB(
-                                  255, 129, 152, 221), // Sonst Orange
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 5, right: 5, top: 3, bottom: 4),
-                          child: Text(
-                            "${dateTimeUtil.getDaysLeft(birthday.date).toString()} \n Tage",
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                    height: 1), // Reduziert Zeilenabstand
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                        ],
                       ),
                       IconButton(
-                        onPressed: () {
-                          shareBirthdayAsCalendarEvent(birthday);
-                        },
+                        onPressed: () => shareBirthdayAsCalendarEvent(birthday),
                         icon: Icon(Icons.adaptive.share),
                       ),
                     ],
                   ),
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      BirthdayDetailScreen.routeName,
+                      arguments: birthday,
+                    ).then((result) {
+                      loadBirthdays();
+                      if (result == true && mounted) {
+                        showSnackbar(context, birthday);
+                      }
+                    });
+                  },
                 ),
               ),
             );
@@ -245,21 +209,15 @@ class BirthdayScreenState extends State<BirthdayScreen> {
       ),
       floatingActionButton: AnimatedPadding(
         duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
         padding: EdgeInsets.only(bottom: _fabBottomPadding),
         child: FloatingActionButton(
           onPressed: () {
             Navigator.of(context)
-                .push(
-              MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (BuildContext context) => const BirthdayForm(),
-              ),
-            )
-                .then((value) {
-              // Refresh list when returning from BirthdayForm
-              loadBirthdays();
-            });
+                .push(MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (context) => const BirthdayForm(),
+                ))
+                .then((_) => loadBirthdays());
           },
           child: const Icon(Icons.add),
         ),

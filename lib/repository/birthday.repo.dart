@@ -50,19 +50,38 @@ class BirthdayRepo {
     _birthdays.remove(birthday);
   }
 
+  //Neue Logic hinzugefügt: abzüglich der Geburtstage die heute sind!!!
   List<Birthday> getNextFiveBirthdays() {
     final dateTimeUtil = DateTimeUtil();
-    List<Birthday> nextFiveBirthdays =
-        List.from(_birthdays); //neuerstellen der liste
+    final todaysBirthdays = getTodaysBirthdays();
+    var listLength = 5;
+    List<Birthday> nextFiveBirthdays = _birthdays
+        .where((birthday) =>
+            !todaysBirthdays.any((excluded) => excluded.id == birthday.id))
+        .toList();
 
     nextFiveBirthdays.sort((a, b) => dateTimeUtil
         .getDaysLeft(a.date)
         .compareTo(dateTimeUtil.getDaysLeft(b.date)));
+    if (todaysBirthdays.isNotEmpty && todaysBirthdays.length < listLength) {
+      listLength - todaysBirthdays.length;
+    }
 
-    //sicherheitsabfrage damit wirklich nur 5 elemente rturnt werden
-    if (nextFiveBirthdays.length > 5) {
-      return nextFiveBirthdays.sublist(0, 5);
+    if (nextFiveBirthdays.length > listLength) {
+      return nextFiveBirthdays.sublist(0, listLength);
     }
     return nextFiveBirthdays;
+  }
+
+  List<Birthday> getTodaysBirthdays() {
+    List<Birthday> list = [];
+
+    for (var i = 0; i < _birthdays.length; i++) {
+      if (_birthdays[i].date.day == DateTime.now().day &&
+          _birthdays[i].date.month == DateTime.now().month) {
+        list.add(_birthdays[i]);
+      }
+    }
+    return list;
   }
 }
