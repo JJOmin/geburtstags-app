@@ -170,7 +170,9 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "wird ${DateFormat('EE, d. MMMM', 'de_DE').format(dateTimeUtil.getNextBirthdayDate(birthday.date))} ${dateTimeUtil.getNextAge(birthday.date)} Jahre alt",
+                                DateFormat('EE, d. MMM yyyy', 'de_DE').format(
+                                    dateTimeUtil
+                                        .getNextBirthdayDate(birthday.date)),
                                 style: Theme.of(context).textTheme.bodySmall,
                                 textAlign: TextAlign.left,
                               ),
@@ -179,6 +181,30 @@ class BirthdayScreenState extends State<BirthdayScreen> {
                         ),
                       ),
                       const SizedBox(width: 20),
+                      const Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: (dateTimeUtil.getDaysLeft(birthday.date)) < 5
+                              ? const Color.fromARGB(
+                                  255, 255, 165, 0) // Weniger als 10 Tage
+                              : const Color.fromARGB(
+                                  255, 129, 152, 221), // Sonst Orange
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 5, right: 5, top: 3, bottom: 4),
+                          child: Text(
+                            "${dateTimeUtil.getNextAge(birthday.date).toString()} \n Jahre",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    height: 1), // Reduziert Zeilenabstand
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
                       const Spacer(),
                       Container(
                         decoration: BoxDecoration(
