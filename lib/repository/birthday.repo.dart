@@ -6,7 +6,7 @@ class BirthdayRepo {
   BirthdayRepo._privateConstructor() {
     _birthdays.addAll([
       Birthday.withId(
-          date: DateTime(1995, 3, 22),
+          date: DateTime(1995, 3, 21),
           name: "Anna",
           sirname: "Schmidt",
           emailAddress: "1@mail.com",
@@ -18,6 +18,48 @@ class BirthdayRepo {
           emailAddress: "1@mail.com",
           phoneNumber: "0151-1234567",
           skills: "Zeichnen"),
+      Birthday.withId(
+          date: DateTime(2000, 3, 21),
+          name: "Lisa",
+          sirname: "Koch",
+          emailAddress: "1@mail.com",
+          phoneNumber: "0151-1234567",
+          skills: "Zeichnen"),
+      Birthday.withId(
+          date: DateTime(2000, 6, 21),
+          name: "Lisa",
+          sirname: "Koch",
+          emailAddress: "1@mail.com",
+          phoneNumber: "0151-1234567",
+          skills: "Zeichnen"),
+      Birthday.withId(
+          date: DateTime(1992, 7, 5),
+          name: "Lukas",
+          sirname: "Müller",
+          notes: "Mag Kaffee",
+          emailAddress: "1@mail.com",
+          phoneNumber: "0151-1234567"),
+      Birthday.withId(
+          date: DateTime(1992, 7, 5),
+          name: "Lukas",
+          sirname: "Müller",
+          notes: "Mag Kaffee",
+          emailAddress: "1@mail.com",
+          phoneNumber: "0151-1234567"),
+      Birthday.withId(
+          date: DateTime(1992, 7, 5),
+          name: "Lukas",
+          sirname: "Müller",
+          notes: "Mag Kaffee",
+          emailAddress: "1@mail.com",
+          phoneNumber: "0151-1234567"),
+      Birthday.withId(
+          date: DateTime(1992, 7, 5),
+          name: "Lukas",
+          sirname: "Müller",
+          notes: "Mag Kaffee",
+          emailAddress: "1@mail.com",
+          phoneNumber: "0151-1234567"),
       Birthday.withId(
           date: DateTime(1992, 7, 5),
           name: "Lukas",
@@ -54,7 +96,7 @@ class BirthdayRepo {
   List<Birthday> getNextFiveBirthdays() {
     final dateTimeUtil = DateTimeUtil();
     final todaysBirthdays = getTodaysBirthdays();
-    var listLength = 5;
+    var listLength = 6;
     List<Birthday> nextFiveBirthdays = _birthdays
         .where((birthday) =>
             !todaysBirthdays.any((excluded) => excluded.id == birthday.id))
@@ -64,7 +106,7 @@ class BirthdayRepo {
         .getDaysLeft(a.date)
         .compareTo(dateTimeUtil.getDaysLeft(b.date)));
     if (todaysBirthdays.isNotEmpty && todaysBirthdays.length < listLength) {
-      listLength - todaysBirthdays.length;
+      listLength = listLength - todaysBirthdays.length;
     }
 
     if (nextFiveBirthdays.length > listLength) {
